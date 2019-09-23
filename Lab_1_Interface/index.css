@@ -1,0 +1,72 @@
+@font-face {
+    font-family: cairo-light;
+    src: url(Cairo/Cairo-Light.ttf);
+}
+
+body {
+    margin: 0px;
+    font-family: cairo-light;
+}
+
+#current-temp-container {
+    position: absolute;
+    display: inline-block;
+    width: 20%;
+    height: 100%; 
+    background-color: rgb(173, 216, 230);
+}
+
+#current-temp {
+    position: absolute;
+    width: 200px;
+    height: 280px;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding-bottom: 10px;
+}
+
+#current-temp-visual {
+    position: absolute;
+    width: 180px;
+    height: 150px;
+    text-align: center;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 2px solid rgb(0, 147, 175);
+    border-radius: 5px;
+
+    text-align: center;
+    font-size: 70;
+}
+
+#test {
+    width: 50px;
+    height: 20px;
+}
+
+#chart-container {
+    position: absolute;
+    left: 20%;
+    right: 0;
+    display: inline-block;
+    width: 79%;
+    height: 100%;
+    padding-right: 20px;
+    background-color:white;
+    border-left: 2px solid rgb(0, 147, 175);
+}
+
+#chart-title {
+    text-align: center;
+}
+
+#line-chart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
