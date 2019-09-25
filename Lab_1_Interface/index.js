@@ -4,9 +4,9 @@ window.onload = function() {
     document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
 };
 
-var currentTime;
 var data = [];
-setInterval(update, 1000);
+var refesh = setInterval(update, 1000);
+const dataShiftPoint = 302
 
 /*
 Test Button
@@ -15,11 +15,16 @@ Test Button
 
 // function clickListener(e) {
 //     if(e.target.tagName == 'BUTTON') {
+//     }
+// }
 
 function update() {
     generate();
     document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
     updateGraph(data);
+    // if(data.length-2 >= 10 && data.length-2 <= 11) {
+    //     updateGraph(data);
+    // }
 }
 //     }
 // };
@@ -33,6 +38,13 @@ function generate() {
     for (i = 0; i < data.length-1; i++) {
         data[i].time = data[i].time + 1;
     }
+    if(data.length >= dataShiftPoint) {
+        data.shift();
+    }
+
+    // data.shift();
+
+    // alert(data.length);
     // alert(data.length);
     //alert(data[data.length-1].temp);
     // alert(currentTime);
@@ -48,12 +60,8 @@ function makeData() {
     arr = [];
     arr.push({
         time: 0, 
-        temp: +25.5
+        temp: +26.0
     });
-    // arr.push({
-    //     time: 1, 
-    //     temp: +26.0
-    // });
     // arr.push({
     //     time: 2, 
     //     temp: +25.5
@@ -124,7 +132,7 @@ var height = svgHeight - margin.top - margin.bottom;
 
 var svg = d3.select('#line-chart')
     .attr("width", svgWidth)
-    .attr("height", svgHeight);
+    .attr("height", svgHeight);  
     
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -171,6 +179,12 @@ function updateGraph(data) {
     var svg = d3.select('#line-chart')
         .attr("width", svgWidth)
         .attr("height", svgHeight);
+
+    var u = d3.select('#line-chart')
+        .selectAll('path')
+        .data(data)
+        
+    u.exit().remove();    
         
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -206,14 +220,12 @@ function updateGraph(data) {
         .attr("dy", "1.0em")
         .text("Temperature");
 
-    g.exit().remove();
-
     g.append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "rgb(0, 147, 175)")
         .attr("stroke-width", 2.0)
-        .attr("d", line);
+        .attr("d", line);   
 
 }
 
