@@ -4,29 +4,35 @@ window.onload = function() {
     document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
 };
 
-var currentTime = [];
+var currentTime;
 var data = [];
+setInterval(update, 1000);
 
 /*
 Test Button
 */
-document.onclick = clickListener;
+// document.onclick = clickListener;
 
-function clickListener(e) {
-    if(e.target.tagName == 'BUTTON') {
-        generate();
-        d3.selectAll("svg > *").remove()
-        document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
-        drawGraph(data);
-    }
-};
+// function clickListener(e) {
+//     if(e.target.tagName == 'BUTTON') {
+
+function update() {
+    generate();
+    document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
+    updateGraph(data);
+}
+//     }
+// };
 
 function generate() {
-    currentTime[5] = currentTime[5] + 1;
     data.push({
-        time: currentTime,
+        time: 0,
         temp: +Math.random() * (30.0 - 20.0) + 20.0
     });
+
+    for (i = 0; i < data.length-1; i++) {
+        data[i].time = data[i].time + 1;
+    }
     // alert(data.length);
     //alert(data[data.length-1].temp);
     // alert(currentTime);
@@ -41,26 +47,65 @@ function makeData() {
 
     arr = [];
     arr.push({
-        time: 4, 
-        temp: +25.5
-    });
-    arr.push({
-        time: 3, 
-        temp: +26.0
-    });
-    arr.push({
-        time: 2, 
-        temp: +25.5
-    });
-    arr.push({
-        time: 1, 
-        temp: +27.0
-    });
-    arr.push({
         time: 0, 
-        temp: +29.0
-    })
-    currentTime = [2019, 9, 22, 9, 30, 24, 00];
+        temp: +25.5
+    });
+    // arr.push({
+    //     time: 1, 
+    //     temp: +26.0
+    // });
+    // arr.push({
+    //     time: 2, 
+    //     temp: +25.5
+    // });
+    // arr.push({
+    //     time: 3, 
+    //     temp: +27.0
+    // });
+    // arr.push({
+    //     time: 4, 
+    //     temp: +29.0
+    // })
+    // arr.push({
+    //     time: 5, 
+    //     temp: +25.5
+    // });
+    // arr.push({
+    //     time: 6, 
+    //     temp: +26.0
+    // });
+    // arr.push({
+    //     time: 7, 
+    //     temp: +25.5
+    // });
+    // arr.push({
+    //     time: 8, 
+    //     temp: +22.0
+    // });
+    // arr.push({
+    //     time: 9, 
+    //     temp: +30.0
+    // })
+    // arr.push({
+    //     time: 10, 
+    //     temp: +26.5
+    // });
+    // arr.push({
+    //     time: 11, 
+    //     temp: +36.0
+    // });
+    // arr.push({
+    //     time: 12, 
+    //     temp: +13.0
+    // });
+    // arr.push({
+    //     time: 13, 
+    //     temp: +21.2
+    // });
+    // arr.push({
+    //     time: 14, 
+    //     temp: +28.0
+    // })
     return arr;
 
 }
@@ -98,7 +143,8 @@ var line = d3.line()
 
 g.append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x))
+    .call(d3.axisBottom(x)
+    .tickFormat(d3.format(".0f")))
     .append("text")
     .attr("fill", "#000")
     .attr("y", -10)
@@ -112,15 +158,65 @@ g.append("g")
     .attr("x", 60)
     .attr("dy", "1.0em")
     .text("Temperature");
-
-g.append("path")
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "rgb(0, 147, 175)")
-    .attr("stroke-width", 2.0)
-    .attr("d", line);
     
 }
+
+function updateGraph(data) {
+
+    var svgWidth = 800, svgHeight = 400;
+    var margin = { top: 20, right: 20, bottom: 30, left: 50 };
+    var width = svgWidth - margin.left - margin.right;
+    var height = svgHeight - margin.top - margin.bottom;
+    
+    var svg = d3.select('#line-chart')
+        .attr("width", svgWidth)
+        .attr("height", svgHeight);
+        
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    
+    var x = d3.scaleTime()
+        .domain([300, 0])
+        .rangeRound([0, width]);
+    
+    var y = d3.scaleLinear()
+        .domain([10, 50])
+        .rangeRound([height, 0]);  
+    
+    var line = d3.line()
+        .x(function(d) { return x(d.time)})
+        .y(function(d) { return y(d.temp)});
+    
+    g.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x)
+        .tickFormat(d3.format(".0f")))
+        .append("text")
+        .attr("fill", "#000")
+        .attr("y", -10)
+        .attr("dx", "70.0em")
+        .text("Seconds Ago");
+    
+    g.append("g")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("fill", "#000")
+        .attr("x", 60)
+        .attr("dy", "1.0em")
+        .text("Temperature");
+
+    g.exit().remove();
+
+    g.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "rgb(0, 147, 175)")
+        .attr("stroke-width", 2.0)
+        .attr("d", line);
+
+}
+
 
 /* Continued Implementation
 
