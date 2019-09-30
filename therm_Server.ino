@@ -3,15 +3,19 @@
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>   // Include the WebServer library
+#include <WebSocketsServer.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <SPI.h>               // include SPI library
 #include <FS.h>   // Include the SPIFFS library
-#include <WebSocketsServer.h>
 
 #include <Adafruit_GFX.h>      // include adafruit graphics library
 #include <Adafruit_PCD8544.h>  // include adafruit PCD8544 (Nokia 5110) library
 
+
+// username ZXNwODI2NnVzZXI=
+// password ZXNwODI2NnBhc3M=
+char serverName[] = "mail.smtp2go.com";   // The SMTP Server
 
 // Nokia 5110 LCD module connections (CLK, DIN, D/C, CS, RST)
 Adafruit_PCD8544 display = Adafruit_PCD8544(D6, D1, D2);
@@ -19,7 +23,7 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(D6, D1, D2);
 ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 ESP8266WebServer server(80);    // Create a webserver object that listens for HTTP request on port 80
 WebSocketsServer webSocket(81);    // create a websocket server on port 81
-
+WiFiClient espClient;
 
 void handleRoot();              // function prototypes for HTTP handlers
 void handleLED();
@@ -42,6 +46,7 @@ String getContentType(String filename); // convert the file extension to the MIM
 bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
 void setup(void) {
+
 
   /////THERMOSTAT SETUP//////////////
   sensors.begin();
@@ -93,11 +98,8 @@ void setup(void) {
   SPIFFS.begin();                           // Start the SPI Flash Files System
   startWebSocket();            // Start a WebSocket server
   ////////////////////////////////////////////////
-  //I dont think we need these for anything anymore, right?
-  //As our data sending isnt going to be through post requests 
-  //but through the websocket sending data every X seconds
-  //server.on("/", HTTP_GET, handleRoot);     // Call the 'handleRoot' function when a client requests URI "/"
-  //server.on("/temp", HTTP_GET, handleTEMP);  // Call the 'handleLED' function when a POST request is made to URI "/LED"
+  server.on("/", HTTP_GET, handleRoot);     // Call the 'handleRoot' function when a client requests URI "/"
+  server.on("/temp", HTTP_GET, handleTEMP);  // Call the 'handleLED' function when a POST request is made to URI "/LED"
   //server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call function "handleNotFound"
 
   server.onNotFound([]() {                              // If the client requests any URI
@@ -106,6 +108,7 @@ void setup(void) {
   });
   server.begin();                           // Actually start the server
   Serial.println("HTTP server started");
+  byte ret = sendEmail();
 }
 
 
@@ -220,9 +223,6 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
 
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) { // When a WebSocket message is received
-  String fakeData = "Data";
-  String fakeTimestamp = "Timestamp";
- 
   switch (type) {
     case WStype_DISCONNECTED:             // if the websocket is disconnected
       Serial.printf("[%u] Disconnected!\n", num);
@@ -234,8 +234,111 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
       break;
     case WStype_TEXT:                     // if new text data is received
       Serial.printf("[%u] get Text: %s\n", num, payload);
+      String fakeData = "Data";
+      String fakeTimestamp = "Timestamp";
       updateData(fakeData,fakeTimestamp);
       break;
     
   }
+}
+
+
+//////////////////EMAIL STUFF
+byte sendEmail()
+
+{
+
+  if (espClient.connect(serverName, 2525) == 1)
+  {
+    Serial.println(F("connected"));
+  }
+  else
+  {
+    Serial.println(F("connection failed"));
+    return 0;
+  }
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending EHLO"));
+  espClient.println("EHLO www.example.com");
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending auth login"));
+  espClient.println("AUTH LOGIN");
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending User"));
+  espClient.println("ZXNwODI2NnVzZXI="); // Your encoded Username
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending Password"));
+  espClient.println("ZXNwODI2NnBhc3M=");// Your encoded Password
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending From"));
+  espClient.println(F("MAIL From: test@gmail.com")); // Enter Sender Mail Id
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending To"));
+  espClient.println(F("RCPT To: 8478269269@txt.att.net")); // Enter Receiver Mail Id
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending DATA"));
+  espClient.println(F("DATA"));
+  if (!emailResp())
+    return 0;
+  Serial.println(F("Sending email"));
+  espClient.println(F("To:  8478269269@txt.att.net")); // Enter Receiver Mail Id
+  // change to your address
+  espClient.println(F("From: ESP@fakedomain")); // Enter Sender Mail Id
+  espClient.println(F("Subject: ESP8266 test e-mail\r\n"));
+  espClient.println(F("This is is a test e-mail sent from ESP8266.\n"));
+  espClient.println(F("Second line of the test e-mail."));
+  espClient.println(F("Third line of the test e-mail."));
+  //
+  espClient.println(F("."));
+  if (!emailResp())
+    return 0;
+  //
+  Serial.println(F("Sending QUIT"));
+  espClient.println(F("QUIT"));
+  if (!emailResp())
+    return 0;
+  //
+  espClient.stop();
+  Serial.println(F("disconnected"));
+  return 1;
+
+}
+
+ 
+
+byte emailResp()
+{
+  byte responseCode;
+  byte readByte;
+  int loopCount = 0;
+
+  while (!espClient.available())
+  {
+    delay(1);
+    loopCount++;
+    if (loopCount > 20000)
+    {
+      espClient.stop();
+      Serial.println(F("\r\nTimeout"));
+      return 0;
+    }
+  }
+  responseCode = espClient.peek();
+  while (espClient.available())
+  {
+    readByte = espClient.read();
+    Serial.write(readByte);
+  }
+  if (responseCode >= '4')
+  {
+    return 0;
+  }
+  return 1;
 }
