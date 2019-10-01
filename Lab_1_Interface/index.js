@@ -1,127 +1,62 @@
+// Page Load
 window.onload = function() {
     data = makeData();
     drawGraph(data);
     document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
 };
 
-var data = [];
-var refesh = setInterval(update, 1000);
-const dataShiftPoint = 302
-
-/*
-Test Button
-*/
-// document.onclick = clickListener;
-
-// function clickListener(e) {
-//     if(e.target.tagName == 'BUTTON') {
-//     }
-// }
-
+// Update Data
 function update() {
     generate();
-    document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
+    if (currentunit == "°C"){
+        document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(data[data.length-1].temp).toFixed(1);
+    } else {
+        var tempNum = (data[data.length-1].temp * 9/5) + 32
+        document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(tempNum).toFixed(1);
+    }
     updateGraph(data);
-    // if(data.length-2 >= 10 && data.length-2 <= 11) {
-    //     updateGraph(data);
-    // }
 }
-//     }
-// };
 
+// Generate Data for Demo
 function generate() {
+    // if (data.length > 10 && data.length < 20) {
+    //     data.push({
+    //         time: 0,
+    //         temp: +null
+    //     });
+    // } else {
+
     data.push({
         time: 0,
         temp: +Math.random() * (30.0 - 20.0) + 20.0
     });
 
+    // }
+
     for (i = 0; i < data.length-1; i++) {
         data[i].time = data[i].time + 1;
     }
-    if(data.length >= dataShiftPoint) {
+    if(data.length >= shiftpoint) {
         data.shift();
     }
-
-    // data.shift();
-
-    // alert(data.length);
-    // alert(data.length);
-    //alert(data[data.length-1].temp);
-    // alert(currentTime);
+    
 
 }
 
-/*
-Hardcoded Data
-*/
 
+// Hardcoded Data Initialization
 function makeData() {
 
     arr = [];
     arr.push({
         time: 0, 
-        temp: +26.0
+        temp: +Math.random() * (30.0 - 20.0) + 20.0
     });
-    // arr.push({
-    //     time: 2, 
-    //     temp: +25.5
-    // });
-    // arr.push({
-    //     time: 3, 
-    //     temp: +27.0
-    // });
-    // arr.push({
-    //     time: 4, 
-    //     temp: +29.0
-    // })
-    // arr.push({
-    //     time: 5, 
-    //     temp: +25.5
-    // });
-    // arr.push({
-    //     time: 6, 
-    //     temp: +26.0
-    // });
-    // arr.push({
-    //     time: 7, 
-    //     temp: +25.5
-    // });
-    // arr.push({
-    //     time: 8, 
-    //     temp: +22.0
-    // });
-    // arr.push({
-    //     time: 9, 
-    //     temp: +30.0
-    // })
-    // arr.push({
-    //     time: 10, 
-    //     temp: +26.5
-    // });
-    // arr.push({
-    //     time: 11, 
-    //     temp: +36.0
-    // });
-    // arr.push({
-    //     time: 12, 
-    //     temp: +13.0
-    // });
-    // arr.push({
-    //     time: 13, 
-    //     temp: +21.2
-    // });
-    // arr.push({
-    //     time: 14, 
-    //     temp: +28.0
-    // })
     return arr;
 
 }
 
-/*
-Line Graph
-*/
-
+// Draw The Graph, No Data
 function drawGraph(data) {
 
 var svgWidth = 800, svgHeight = 400;
@@ -132,7 +67,7 @@ var height = svgHeight - margin.top - margin.bottom;
 
 var svg = d3.select('#line-chart')
     .attr("width", svgWidth)
-    .attr("height", svgHeight);  
+    .attr("height", svgHeight)
     
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -142,12 +77,12 @@ var x = d3.scaleTime()
     .rangeRound([0, width]);
 
 var y = d3.scaleLinear()
-    .domain([10, 50])
+    .domain([min, max])
     .rangeRound([height, 0]);  
 
 var line = d3.line()
     .x(function(d) { return x(d.time)})
-    .y(function(d) { return y(d.temp)});
+    .y(function(d) { return y(d.temp)});   
 
 g.append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -163,12 +98,13 @@ g.append("g")
     .call(d3.axisLeft(y))
     .append("text")
     .attr("fill", "#000")
-    .attr("x", 60)
+    .attr("x", 80)
     .attr("dy", "1.0em")
-    .text("Temperature");
-    
+    .text("Temperature (°C)");
+
 }
 
+// Update The Graph
 function updateGraph(data) {
 
     var svgWidth = 800, svgHeight = 400;
@@ -178,13 +114,17 @@ function updateGraph(data) {
     
     var svg = d3.select('#line-chart')
         .attr("width", svgWidth)
-        .attr("height", svgHeight);
+        .attr("height", svgHeight)
 
     var u = d3.select('#line-chart')
         .selectAll('path')
         .data(data)
         
     u.exit().remove();    
+
+    // var yAx = d3.selectAll('.ticks')
+
+    // yAx.exit().remove();
         
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -195,10 +135,11 @@ function updateGraph(data) {
         .rangeRound([0, width]);
     
     var y = d3.scaleLinear()
-        .domain([10, 50])
+        .domain([min, max])
         .rangeRound([height, 0]);  
     
     var line = d3.line()
+        .defined(function (d){ return d.temp != 0; })
         .x(function(d) { return x(d.time)})
         .y(function(d) { return y(d.temp)});
     
@@ -216,9 +157,9 @@ function updateGraph(data) {
         .call(d3.axisLeft(y))
         .append("text")
         .attr("fill", "#000")
-        .attr("x", 60)
+        .attr("x", 80)
         .attr("dy", "1.0em")
-        .text("Temperature");
+        .text("Temperature (°C)");
 
     g.append("path")
         .datum(data)
@@ -229,16 +170,71 @@ function updateGraph(data) {
 
 }
 
+document.getElementById('unit-change-button').onclick = function changeContent() {
+    if (document.getElementById('unit-change-button').innerHTML == "Change to Fahrenheit"){
+        unitChange("°F", "Celsius");
+    } else if (document.getElementById('unit-change-button').innerHTML == "Change to Celsius") {
+        unitChange("°C", "Fahrenheit");
+    }
+}
+
+// User Messages Demo
+
+// document.getElementById('message-test-button').onclick = function changeContent() { 
+
+//     switch (document.getElementById('current-data-message').innerHTML){
+//         case "✓ Data is Available":
+//             document.getElementById('current-data-message').innerHTML = "Data is Unavailable";
+//             document.getElementById('current-data-message').style.color = "red";
+//             break;
+//         case "Data is Unavailable":
+//             document.getElementById('current-data-message').innerHTML = "✓ Data is Available";
+//             document.getElementById('current-data-message').style.color = "green";
+//             break;    
+//     }
+
+//     switch (document.getElementById('current-sensor-message').innerHTML){
+//         case "✓ Sensor is Plugged In":
+//             document.getElementById('current-sensor-message').innerHTML = "Sensor is Unplugged";
+//             document.getElementById('current-sensor-message').style.color = "red";
+//             break;
+//         case "Sensor is Unplugged":
+//             document.getElementById('current-sensor-message').innerHTML = "✓ Sensor is Plugged In";
+//             document.getElementById('current-sensor-message').style.color = "green";
+//             break;    
+//     }
+
+// }
+
+function unitChange(unit, string) {
+    document.getElementById('unit-change-button').innerHTML = "Change to " + string;
+    document.getElementById('current-temp-heading').innerHTML = "Current Temperature (" + unit + ")";
+    currentunit = unit;
+    update();
+    updateGraph(data);
+}
+
+var data = [];
+var refesh = setInterval(update, 1000);
+var shiftpoint = 301;
+var max = 50;
+var min = 10;
+var currentunit = "°C";
+
 
 /* Continued Implementation
 
-- Connection to Hardware
-- New data appends correctly
-- Set axises, 0-300 seconds, 10-50 degrees C
-- Text Updates
+- Unplugged Sensor Message
+- No Data Available Message
+- User Action to Turn Off Temperature Display
+- Data from the Hardware if it was one once the Web UI boots up
+- Make Graph Scrollable Horizontally
 - Scalable
-- Message when Hardware is off
-- Missing Data
+- Missing Data (Hardware is Off, Data is too Small, Data is too Large)
+- If the Hardware is Off the Live Data should continue to come and be missing
+
+Finished but just need to implement it with data from hardware
+- Missing Data can be shown with null in the data array
 
 */
 
