@@ -20,19 +20,11 @@ function update() {
 
 // Generate Data for Demo
 function generate() {
-    // if (data.length > 10 && data.length < 20) {
-    //     data.push({
-    //         time: 0,
-    //         temp: +null
-    //     });
-    // } else {
 
     dataset.push({
         time: 0,
         temp: +Math.random() * (30.0 - 20.0) + 20.0
     });
-
-    // }
 
     for (i = 0; i < dataset.length-1; i++) {
         dataset[i].time = dataset[i].time + 1;
@@ -46,100 +38,37 @@ function generate() {
 
 
 // Hardcoded Data Initialization
-function makeData() {
+// function makeData() {
 
-    arr = [];
-    arr.push({
-        time: 5, 
-        temp: +Math.random() * (30.0 - 20.0) + 20.0
-    })
-    arr.push({
-        time: 4, 
-        temp: +Math.random() * (30.0 - 20.0) + 20.0
-    })
-    arr.push({
-        time: 3, 
-        temp: +Math.random() * (30.0 - 20.0) + 20.0
-    })
-    arr.push({
-        time: 2, 
-        temp: +Math.random() * (30.0 - 20.0) + 20.0
-    })
-    arr.push({
-        time: 1, 
-        temp: +Math.random() * (30.0 - 20.0) + 20.0
-    })
-    arr.push({
-        time: 0, 
-        temp: +Math.random() * (30.0 - 20.0) + 20.0
-    })
-    return arr;
-
-}
-
-// Draw The Graph, No Data
-// function drawGraph() {
-
-//     var svgWidth = 800, svgHeight = 400;
-//     var margin = { top: 20, right: 20, bottom: 30, left: 50 };
-//     var width = svgWidth - margin.left - margin.right;
-//     var height = svgHeight - margin.top - margin.bottom;
-
-    // var svg = d3.select('#line-chart')
-    //     .attr("width", svgWidth)
-    //     .attr("height", svgHeight)
-    
-    // var g = svg.append("g")
-    //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    // var x = d3.scaleTime()
-    //     .domain([300, 0])
-    //     .rangeRound([0, width]);
-
-    // var y = d3.scaleLinear()
-    //     .domain([min, max])
-    //     .rangeRound([height, 0]);  
-
-    // var line = d3.line()
-    //     .x(function(d) { return x(d.time)})
-    //     .y(function(d) { return y(d.temp)});   
-
-    // g.append("g")
-    //     .attr("transform", "translate(0," + height + ")")
-    //     .call(d3.axisBottom(x)
-    //     .tickFormat(d3.format(".0f")))
-    //     .append("text")
-//         .attr("fill", "#000")
-//         .attr("y", -10)
-//         .attr("dx", "70.0em")
-//         .text("Seconds Ago");
-
-//     g.append("g")
-//         .call(d3.axisLeft(y))
-//         .append("text")
-//         .attr("fill", "#000")
-//         .attr("x", 80)
-//         .attr("dy", "1.0em")
-//         .text("Temperature (°C)");    
-
-//     d3.csv("temp_data.csv")
-//         .get(function(error,data){  
-
-//         tempData = data;
-//         storeData(tempData);    
-
-//         g.append("path")
-//             .datum(dataset)
-//             .attr("fill", "none")
-//             .attr("stroke", "rgb(0, 147, 175)")
-//             .attr("stroke-width", 2.0)
-//             .attr("d", line);  
-        
-//         document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(dataset[dataset.length-1].temp).toFixed(1);     
-        
-//     });    
+//     arr = [];
+//     arr.push({
+//         time: 5, 
+//         temp: +Math.random() * (30.0 - 20.0) + 20.0
+//     })
+//     arr.push({
+//         time: 4, 
+//         temp: +Math.random() * (30.0 - 20.0) + 20.0
+//     })
+//     arr.push({
+//         time: 3, 
+//         temp: +Math.random() * (30.0 - 20.0) + 20.0
+//     })
+//     arr.push({
+//         time: 2, 
+//         temp: +Math.random() * (30.0 - 20.0) + 20.0
+//     })
+//     arr.push({
+//         time: 1, 
+//         temp: +Math.random() * (30.0 - 20.0) + 20.0
+//     })
+//     arr.push({
+//         time: 0, 
+//         temp: +Math.random() * (30.0 - 20.0) + 20.0
+//     })
+//     return arr;
 
 // }
+
 
 function csvData() {
 
@@ -280,33 +209,6 @@ function updateGraph(dataset) {
         .attr("stroke-width", 2.0)
         .attr("d", line);
 
-    //path.exit().remove();    
-
-    //path.enter().append("path")     
-
-    // else {
-
-    //     var path = svg.selectAll("path").data(dataset);
-
-    //     path.enter().append("path")
-
-    // }
-
-    // d3.select('#line-chart')
-    //     .selectAll('path')
-    //     .data(dataset)
-    //     .enter();    
-        
-    //document.getElementById("current-temp-visual").innerHTML = Number.parseFloat(dataset[dataset.length-1].temp).toFixed(1);  
-
-        // g.append("path")
-        //     .datum(dataset)
-        //     .attr("fill", "none")
-        //     .attr("stroke", "rgb(0, 147, 175)")
-        //     .attr("stroke-width", 2.0)
-        //     .attr("d", line)    
- 
-
 }
 
 document.getElementById('unit-change-button').onclick = function changeUnits() {
@@ -385,53 +287,3 @@ Finished but just need to implement it with data from hardware
 - Missing Data can be shown with null in the data array
 
 */
-
-
-
-
-
-
-// /*
-// Line Graph Bitcoin Example
-// */
-
-// //  API to fetch historical data of Bitcoin Price Index
-// const api = 'https://api.coindesk.com/v1/bpi/historical/close.json?start=2017-12-31&end=2018-04-01';
-
-/**
- * Loading data from API when DOM Content has been loaded'.
- */
-// document.addEventListener("DOMContentLoaded", function(event) {
-// fetch(api)
-//     .then(function(response) { return response.json(); })
-//     .then(function(data) {
-//         var parsedData = parseData(data);
-//         drawChart(parsedData);
-//     })
-//     .catch(function(err) { console.log(err); })
-// });
-
-// document.getElementById('test').onclick() = function() {
-//     alert("something happened");
-// };
-
-/**
- * Parse data into key-value pairs
- * @param {object} data Object containing historical data of BPI
- */
-// function parseData(data) {
-//     var arr = [];
-//     for (var i in data.bpi) {
-//         arr.push({
-//             date: new Date(i), //date
-//             value: +data.bpi[i] //convert string to number
-//         });
-//     }
-//     return arr;
-
-// }
-
-
-
-
-
