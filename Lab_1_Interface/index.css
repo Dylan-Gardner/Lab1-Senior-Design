@@ -32,7 +32,7 @@ body {
     width: 180px;
     height: 150px;
     text-align: center;
-    top: 60%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
@@ -43,9 +43,70 @@ body {
     font-size: 70;
 }
 
-#test {
-    width: 50px;
-    height: 20px;
+#unit-change-button {
+    position: absolute;
+    top: 82%;
+    left: 50%;
+    width: 160px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    color: black;
+    border: 2px solid rgb(0, 147, 175);
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+#lcd-button {
+    position: absolute;
+    top: 95%;
+    left: 50%;
+    width: 160px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    color: black;
+    border: 2px solid rgb(0, 147, 175);
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+#text-update-heading {
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    width: 180px;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#text-update-entry {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 40px;
+    padding: 5px 5px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 15px;
+    border: 2px solid rgb(0, 147, 175);
+    border-radius: 5px;
+}
+
+#current-sensor-message {
+    position: absolute;
+    top: 93%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: green;
+}
+
+#current-data-message {
+    position: absolute;
+    top: 97%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: green;
 }
 
 #chart-container {
@@ -70,3 +131,21 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+@media screen and (max-width: 1000px) {
+    #current-temp-container{
+        display: none;
+    }
+    
+    #chart-container {
+        width: 100%;
+        left: 0%;
+        border-left: 2px solid white;
+    }
+    
+}
+
+@media screen and (max-height: 580px) {
+    
+}
+
