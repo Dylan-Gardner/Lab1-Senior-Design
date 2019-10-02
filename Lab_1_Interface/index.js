@@ -261,33 +261,21 @@ document.getElementById('text-update-entry').onkeypress = function(e){
     }
 }
 
-// User Messages Demo
-
-// document.getElementById('message-test-button').onclick = function changeContent() { 
-
-//     switch (document.getElementById('current-data-message').innerHTML){
-//         case "✓ Data is Available":
-//             document.getElementById('current-data-message').innerHTML = "Data is Unavailable";
-//             document.getElementById('current-data-message').style.color = "red";
-//             break;
-//         case "Data is Unavailable":
-//             document.getElementById('current-data-message').innerHTML = "✓ Data is Available";
-//             document.getElementById('current-data-message').style.color = "green";
-//             break;    
-//     }
-
-//     switch (document.getElementById('current-sensor-message').innerHTML){
-//         case "✓ Sensor is Plugged In":
-//             document.getElementById('current-sensor-message').innerHTML = "Sensor is Unplugged";
-//             document.getElementById('current-sensor-message').style.color = "red";
-//             break;
-//         case "Sensor is Unplugged":
-//             document.getElementById('current-sensor-message').innerHTML = "✓ Sensor is Plugged In";
-//             document.getElementById('current-sensor-message').style.color = "green";
-//             break;    
-//     }
-
-// }
+// If the sensor is plugged in:
+// document.getElementById('current-sensor-message').innerHTML = "✓ Sensor is Plugged In";
+// document.getElementById('current-sensor-message').style.color = "green";
+// 
+// If the sensor is unplugged: 
+// document.getElementById('current-sensor-message').innerHTML = "Sensor is Unplugged";
+// document.getElementById('current-sensor-message').style.color = "red";
+//
+// If device is on: 
+// document.getElementById('current-data-message').innerHTML = "✓ Data is Available";
+// document.getElementById('current-data-message').style.color = "green";
+// 
+// If device is off: 
+// document.getElementById('current-data-message').innerHTML = "Data is Unavailable";
+// document.getElementById('current-data-message').style.color = "red";
 
 function unitChange(unit, string) {
     document.getElementById('unit-change-button').innerHTML = "Change to " + string;
