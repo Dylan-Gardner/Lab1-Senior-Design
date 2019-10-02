@@ -1,4 +1,38 @@
+
 // Page Load
+//////////WEBSOCKET CODE
+var connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
+connection.onopen = function () {
+  connection.send('Connect ' + new Date());
+};
+connection.onerror = function (error) {
+  console.log('WebSocket Error ', error);
+};
+connection.onmessage = function (e) {
+  console.log('Server: ', e.data);
+};
+connection.onclose = function () {
+  console.log('WebSocket connection closed');
+};
+
+function requestData () {
+  var teststr = 'RequestData';
+  console.log('Requesting Temperature Data');
+  connection.send(teststr);
+}
+//////////////////////////////////////////
+window.setInterval(function(){
+ /// right now this is pinging the server every 5 seconds
+//It doesnt need to actually do anything with the data, the data is in connection.onmessage as e.data.
+//With the CSV, it will need to build the data before starting to request it. This will change how we store the data arrays too
+//As the arrays will have to be initialized by the csv on the board, and then data to be requested.
+//I dont really know the best way to store 300s on the chip, and then have the webpage be initialized from that data
+//but once we figure that out the software besides some javascript shit is basically done as this will then constantly update it
+ 
+requestData();
+}, 5000);
+
+
 window.onload = function() {
     // dataset = makeData();
     csvData();
