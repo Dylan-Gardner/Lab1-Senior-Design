@@ -69,6 +69,30 @@ body {
     cursor: pointer;
 }
 
+#text-update-heading {
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    width: 180px;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#text-update-entry {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 40px;
+    padding: 5px 5px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 15px;
+    border: 2px solid rgb(0, 147, 175);
+    border-radius: 5px;
+}
+
 #current-sensor-message {
     position: absolute;
     top: 93%;
