@@ -164,4 +164,19 @@ body {
     
 }
 
+
+
+
+                <input id="text-update-entry" placeholder="Phone #"></input>
+                <input id="Min-update-entry" placeholder="Min Temp"></input>
+                <input id="Max-update-entry" placeholder="Max Temp"></input>
+
+
+                <form name="serviceProvider">
+                    <select name="jumpmenu"">
+                    <option>Select your service provider:</option>
+                    <option >AT&T</option>
+                    <option >Verizon</option>
+                    <option >Sprint</option>
+
  
