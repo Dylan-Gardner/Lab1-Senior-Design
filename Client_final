@@ -59,7 +59,7 @@ void setup(void) {
   attachInterrupt(digitalPinToInterrupt(buttonPin), displayButtonPushedISR, CHANGE);
 
   //////////////////////////////////
-  //SERVER SETUP////////////////////
+  //WiFi Set Up////////////////////
   //////////////////////////////////
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   Serial.println('\n');
